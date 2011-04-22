@@ -5,7 +5,7 @@
 class Author
   include MongoMapper::Document
 
-  DEFAULT_AVATAR = "http://rstat.us/images/avatar.png"
+  DEFAULT_AVATAR = "/images/avatar.png"
   ENCODED_DEFAULT_AVATAR = URI.encode_www_form_component(DEFAULT_AVATAR)
 
   GRAVATAR_HOST  = "gravatar.com"
