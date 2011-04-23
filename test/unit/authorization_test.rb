@@ -25,14 +25,12 @@ class AuthorizationTest < MiniTest::Unit::TestCase
   end
 
   def test_create_from_hash_no_uid
-    a = Authorization.new(:uid => nil, :provider => "twitter")
-    assert_equal a.save, false
-    assert_equal a.errors[:uid], ["can't be empty"]
+    a = Factory.build(:authorization, :uid => nil, :provider => "twitter")
+    refute a.save, "can't be empty"
   end
 
   def test_create_from_hash_no_provider
-    a = Authorization.new(:uid => 12345, :provider => nil)
-    assert_equal a.save, false
-    assert_equal a.errors[:provider], ["can't be empty"]
+    a = Factory.build(:authorization, :uid => 12345, :provider => nil)
+    refute a.save, "can't be empty"
   end
 end

@@ -7,18 +7,18 @@ class UserTest < MiniTest::Unit::TestCase
   include TestHelper
 
   def test_at_reply_filter
-    u = User.create(:username => "steve")
-    update = Update.create(:text => "@steve oh hai!")
-    Update.create(:text => "just some other update")
+    u = Factory :user, :username => "steve"
+    update = Factory(:update, :text => "@steve oh hai!")
+    Factory(:update, :text => "just some other update")
 
     assert_equal 1, u.at_replies({}).length
     assert_equal update.id, u.at_replies({}).first.id
   end
 
   def test_hashtag_filter
-    User.create(:username => "steve")
-    update = Update.create(:text => "mother-effing #hashtags")
-    Update.create(:text => "just some other update")
+    Factory :user, :username => "steve"
+    update = Factory(:update, :text => "mother-effing #hashtags")
+    Factory(:update, :text => "just some other update")
 
     assert_equal 1, Update.hashtag_search("hashtags", {}).length
     assert_equal update.id, Update.hashtag_search("hashtags", {}).first.id
@@ -37,7 +37,7 @@ class UserTest < MiniTest::Unit::TestCase
   end
 
   def test_username_is_too_long
-    u = User.new :username => "burningTyger_will_fail_with_this_username"
+    u = Factory.build :user, :username => "burningTyger_will_fail_with_this_username"
     refute u.save
   end
 
@@ -75,7 +75,7 @@ class UserTest < MiniTest::Unit::TestCase
   end
 
   def test_reset_password
-    u = Factory.create(:user)
+    u = Factory.build(:user)
     u.password = "test_password"
     u.save
     prev_pass = u.hashed_password
@@ -85,22 +85,27 @@ class UserTest < MiniTest::Unit::TestCase
 
   def test_no_special_chars_in_usernames
     ["something@something.com", "another'quirk", ".boundary_case.", "another..case", "another/random\\test", "yet]another", ".Ὁμηρος", "I have spaces"].each do |i|
-      u = User.new :username => i
+      u = Factory.build :user, :username => i
       refute u.save, "contains restricted characters."
     end
     ["Ὁμηρος"].each do |i|
-      u = User.new :username => i
+      u = Factory.build :user, :username => i
       assert u.save, "characters being restricted unintentionally."
     end
   end
 
   def test_username_cant_be_empty
-    u = User.new :username => ""
+    u = Factory.build :user, :username => ""
     refute u.save, "blank username"
   end
 
+  def test_username_is_ok
+    u = Factory.build :user, :username => "justauser"
+    assert u.save
+  end
+  
   def test_username_cant_be_nil
-    u = User.new :username => nil
+    u = Factory.build :user, :username => nil
     refute u.save, "nil username"
   end
 
